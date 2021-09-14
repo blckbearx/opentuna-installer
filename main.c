@@ -24,8 +24,20 @@ extern int size_opentuna_sys;
 extern u8 opl_elf[];
 extern int size_opl_elf;
 //----------------------------------------//
+extern u8 opl_icn[];
+extern int size_opl_icn;
+//----------------------------------------//
+extern u8 opl_sys[];
+extern int size_opl_sys;
+//----------------------------------------//
 extern u8 ule_elf[];
 extern int size_ule_elf;
+//----------------------------------------//
+extern u8 ule_icn[];
+extern int size_ule_icn;
+//----------------------------------------//
+extern u8 ule_sys[];
+extern int size_ule_sys;
 //----------------------------------------//
 extern u8 apps_icn[];
 extern int size_apps_icn;
@@ -140,7 +152,7 @@ static int install(void)
 	if (ret != -1){return 1;}
 
 	//If it is not a PS2 MC, we have an error:
-	if (mc_Type != 2){return 2;}
+	//if (mc_Type != 2){return 2;}
 
 	//If there's no free space, we have an error:
 	if (mc_Free < 1727){return 3;}
@@ -150,12 +162,20 @@ static int install(void)
 	if (file_exists("mc0:/OPENTUNA/icon.sys")) {return 4;}
 	if (file_exists("mc0:/APPS/icon.sys")) {return 5;}
 	if (file_exists("mc0:/APPS/tunacan.icn")) {return 5;}
-	if (file_exists("mc0:/APPS/ULE.ELF")) {return 5;}
-	if (file_exists("mc0:/APPS/OPNPS2LD.ELF")) {return 5;}
+	if (file_exists("mc0:/BOOT/BOOT.ELF")) {return 5;}
+	if (file_exists("mc0:/BOOT/BOOT.icn")) {return 5;}
+	if (file_exists("mc0:/BOOT/icon.sys")) {return 5;}
+	if (file_exists("mc0:/OPL/OPNPS2LD.ELF")) {return 5;}
+	if (file_exists("mc0:/OPL/opl.icn")) {return 5;}
+	if (file_exists("mc0:/OPL/icon.sys")) {return 5;}
 
 	ret = mcMkDir(0, 0, "OPENTUNA");
 	mcSync(0, NULL, &ret);
 	ret = mcMkDir(0, 0, "APPS");
+	mcSync(0, NULL, &ret);
+	ret = mcMkDir(0, 0, "BOOT");
+	mcSync(0, NULL, &ret);
+	ret = mcMkDir(0, 0, "OPL");
 	mcSync(0, NULL, &ret);
 
 	retorno = write_embed(&opentuna_icn, size_opentuna_icn, "mc0:/OPENTUNA","icon.icn");
@@ -166,9 +186,17 @@ static int install(void)
 	if (retorno < 0) {return 6;}
 	retorno = write_embed(&apps_icn, size_apps_icn, "mc0:/APPS","tunacan.icn");
 	if (retorno < 0) {return 6;}
-	retorno = write_embed(&ule_elf, size_ule_elf, "mc0:/APPS","ULE.ELF");
+	retorno = write_embed(&ule_elf, size_ule_elf, "mc0:/BOOT","BOOT.ELF");
 	if (retorno < 0) {return 6;}
-	retorno = write_embed(&opl_elf, size_opl_elf, "mc0:/APPS","OPNPS2LD.ELF");
+	retorno = write_embed(&ule_icn, size_ule_icn, "mc0:/BOOT","BOOT.icn");
+	if (retorno < 0) {return 6;}
+	retorno = write_embed(&ule_sys, size_ule_sys, "mc0:/BOOT","icon.sys");
+	if (retorno < 0) {return 6;}
+	retorno = write_embed(&opl_elf, size_opl_elf, "mc0:/OPL","OPNPS2LD.ELF");
+	if (retorno < 0) {return 6;}
+	retorno = write_embed(&opl_icn, size_opl_icn, "mc0:/OPL","opl.icn");
+	if (retorno < 0) {return 6;}
+	retorno = write_embed(&opl_sys, size_opl_sys, "mc0:/OPL","icon.sys");
 	if (retorno < 0) {return 6;}
 
 #ifdef __DEBUG_PRINTF__
